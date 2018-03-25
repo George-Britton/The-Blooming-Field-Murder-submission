@@ -40,6 +40,7 @@ var crimeSceneTwoLine = [
     "As you wish.",
     "",
     "Yes, now I would like to talk to this Abraham Baitman. I think it's time for a confrontation.",
+    ""
 ];
 
 var crimeSceneRestLine = [
@@ -47,7 +48,8 @@ var crimeSceneRestLine = [
     "Not quite yet, I would like to make sure I didn't miss anything.",
     "As you wish.",
     "",
-    "Yes, now I would like to talk to this Abraham Baitman. I think it's time for a confrontation."
+    "Yes, now I would like to talk to this Abraham Baitman. I think it's time for a confrontation.",
+    ""
 ];
 
 var confrontationLine = [
