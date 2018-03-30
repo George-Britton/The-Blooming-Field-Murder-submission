@@ -1,131 +1,23 @@
-var game = new Phaser.Game(1800, 1000, Phaser.AUTO, null, { preload: preload, create: create, update: update, render: render }); // this variable sets the game up, and is implemented by the Phaser API
-
-// the following list of variables are all sprites that are used throughout the game
-var altBack, // this is the 'x' button to close the magnified clue overview
-    altScroll, // this is the magnified clue background scroll
-    background, // this is the image where the players stand, and takes up the game bounds from (0, 0) to (1800, 700)
-    book, // this is the book menu background image
-    bookBackButton, // this is the book menu back button
-    booksButton, // this is the button that the player presses to access the book menu
-    bugs1, // this is the first page of information in the bugs book
-    bugs2, // this is the second page of information in the bugs book
-    bugs3, // this is the third page of information in the bugs book
-    bugs4, // this is the fourth page of information in the bugs book
-    bugsTab, // this is the book tab that takes the player to the bugs book
-    bugsTitle, // this is the title image of the bugs book
-    clueSearchHoofPrints, // this is the hoof print image that appears on the clue search scene
-    clueSearchKey, // this is the key image that appears on the clue search scene
-    clueSearchLetter, // this is the letter image that appears on the clue search scene
-    clueSearchMaggot, // this is the maggot image that appears on the clue search scene
-    clueSearchNote, // this is the note image that appears on the clue search scene
-    constable, // this is the constable character sprite
-    corpse, // this is the dead body sprite
-    destination, // this is the 1 pixel sprite that is spawned when the player taps on the screen to walk somewhere
-    dialogueArrow, // this is the three dots in the dialogue box that appear to show the player they can continue the dialogue
-    dialogueBox, // this is the dialogue box that spans the game bounds from (0, 700) to (1800, 1000)
-    dialogueLine, // this is the line of text that changes every line to reflet the line of dialogue being read from the dialogue arrays
-    directionArrow, // this is the poiting arrow in the house scene
-    done, // this is the done button in the clue search scene
-    door, // this is the door sprite that the player can press to leave the house scene
-    grandfather, // this is the grandfather character sprite
-    hoofAlt, // this is the magnified hoof print image
-    hoofAltText, // this is the magnified hoof print text
-    hoofClue, // this is the hoof print clue image that appears in the player's bag
-    hoofMag, // this is the magnifiying glass icon next to the hoof print image in the bag
-    keyAlt, // this is the magnified key image
-    keyAltText, // this is the magnified key text
-    keyClue, // this is the key clue image that appears in the player's bag
-    keyMag, // this is the magnifiying glass icon next to the key image in the bag
-    letterAlt, // this is the magnified letter image
-    letterAltText, // this is the magnified letter text displayed if the player didn't also find the note
-    letterAltTextBoth, // this is the magnified letter text displayed if the player did also find the note
-    letterClue, // this is the letter clue image that appears in the player's bag
-    letterMag, // this is the magnifiying glass icon next to the letter image in the bag
-    loadingScreen, // this is the loading screen image
-    loseScreen, // this is the lose screen image
-    maggotAlt, // this is the magnified maggot image
-    maggotAltText, // this is the magnified meggot text
-    maggotClue, // this is the meggot clue image that appears in the player's bag
-    maggotMag, // this is the magnifiying glass icon next to the meggot image in the bag
-    menuButton, // this is the button that the player presses to access the pause menu
-    menuScroll, // this is the pause menu background scroll
-    nextPageTab, // this is the arrow button on the bottom right of the book manu, used to go the next page
-    no, // this is the button the player presses if they want to go back and check for more clues on the crime scene screen
-    noteAlt, // this is the magnified note image
-    noteAltText, // this is the magnified note text
-    noteAltTextBoth, // this is the magnified note text
-    noteClue, // this is the note clue image that appears in the player's bag
-    noteMag, // this is the magnifiying glass icon next to the note image in the bag
-    playButton, // this is the play button on the title screen
-    player, // this is the player character sprite
-    poison1, // this is the first page of information in the poison book
-    poison2, // this is the second page of information in the poison book
-    poison3, // this is the third page of information in the poison book
-    poison4, // this is the fourth page of information in the poison book
-    poisonedAlt, // this is the magnified poisoned face image
-    poisonedAltText, // this is the magnified poisoned face text
-    poisonedClue, // this is the poisoned face clue that appears in the player's bag
-    poisonedMag, // this is the magnifiying glass icon next to the poisoned face image in the bag
-    poisonTab, // this is the book tab that takes the player to the poison book
-    poisonTitle, // this is the title image of the poison book
-    previousPageTab, // this is the arrow button on the bottom left of the book manu, used to go the previous page
-    quitButton, // this is the quit game button on the title screen and in the pause menu
-    resumeButton, // this is the resume game button in the pause menu
-    satchelBackButton, // this is the back button to exit out of the bag manu
-    satchelButton, // this is the button the player presses to access the bag manu
-    speaker, // this is the dialogue speaker's name that appears just above the dialogue line
-    startOverButton, // this is the start over game in the pause menu
-    watch, // this is the grandfather's watch icon in the bag
-    winScreen, // this is the win screen image
-    yes; // this is the button used when the player is satisfied that they've found all of the clues and wish to progress to the confrontation
-
-// the following list of variables are all values that are used to replace 'magic numbers' in the code, or act as checklist
-var alted = false, // this is used so that the player cannot magnify one clue while another is already magnified
-    bookOut = "poison", // this is used to determine with set of book pages to display to the player
-    characterDelay = 25, // this is the wait time between character printing in the dialogue line
-    characterOn, // this is the number character the line of dialogue is currently printing
-    cluesFound = [], // this is an array of the clues found, the order of which is used to determine the place of each clue in the bag menu
-    crimeSceneCount = 1, // this is used to determine which array of crime scene dialogue to read from
-    direction = "left", // this is used to set the direction the character sprite is facing
-    footstepPlaying = false, // this is set to true when the player starts walking, and false when they stop, so that you can't layer many instances of the sound effect
-    guess = "", // the value of this changes to the name of the last clue the player selected to present to the Baron
-    hoofFound = false, // this is set to true when the player finds the hoof print clue
-    keyFound = false, // this is set to true when the player finds the key clue
-    letterFound = false, // this is set to true when the player find the letter clue
-    lineOn, // this is the array slot currently being read from in the dialogue
-    lost = false, // this is used to determine if the Baron should say the losing dialogue and display the lose screen
-    maggotFound = false, // this is set to true when the player finds the maggot clue
-    mistakes = 0, // this is incremented every time the player presents the wrong clue to the Baron
-    moving = false, // this is used to determine what the player's body velocity should be 
-    noteFound = false, // this is set to true when the player finds the note clue
-    pageOn = 0, // this is used to determine which page out the book that's out to display
-    paused = false, // this is used to deactivate any buttons and movement when the game is paused
-    poisonedFound = false, // this is set to true when the constable mentions the potential poisoning
-    scene = "title", // this is used to determine who's present, what the background image and music are, and which array of dialogue to be reading
-    successes = 0, // this is incremented when the player correctly presents a clue to the Baron
-    watchGiven = false, // this is set to true when the player selects the watch from the bag and presents it to the grandfather
-    writing = false; // this is used to hide the dialogue dots and stop the player skipping dialogue
-
-// the following list of variables are all the audio files used in the game, and are implemented using the Howler API
-var bag = new Howl({ src: ['audio/bag.wav'], volume: 0.4 }), // this is the bag opening sound effect
-    baitmanTalk = new Howl({ src: ['audio/baitmanTalk.wav'], loop: 1, volume: 0.5 }), // this is the sound effect used when the Baron is talking
-    bookClose = new Howl({ src: ['audio/bookClose.mp3'] }), // this is the book closing sound effect
-    clueSearchMusic = new Howl({ src: ['audio/clueSearchMusic.mp3'], loop: 1, volume: 0.4 }), // this is the music played on the clue search screen
-    confrontationMusic = new Howl({ src: ['audio/confrontationMusic.mp3'], loop: 1, volume: 0.4 }), // this is the music played on the confrontation screen
-    constableTalk = new Howl({ src: ['audio/constableTalk.wav'], loop: 1, volume: 0.8 }), // this is the sound effect used when the constable is takling
-    crimeSceneMusic1 = new Howl({ src: ['audio/crimeSceneMusic1.mp3'], loop: 1, volume: 0.4 }), // this is the music played on the first instance of the crime scene screen
-    crimeSceneMusic2 = new Howl({ src: ['audio/crimeSceneMusic2.mp3'], loop: 1, volume: 0.4 }), // this is the music played on the rest of the instances of the crime scene screen
-    cymbal = new Howl({ src: ['audio/cymbal.mp3'] }), // this is the sound effect used when everyone shouts "WHAT?!" in the confrontation scene
-    footstep = new Howl({ src: ['audio/footstep.mp3'], loop: 1 }), // this is the footstep sound effect played when the player is walking
-    grandfatherTalk = new Howl({ src: ['audio/grandfatherTalk.wav'], loop: 1, volume: 1 }), // this is the sound effect used when the grandfather is talking
-    houseMusic = new Howl({ src: ['audio/houseMusic.mp3'], volume: 0.4, loop: 1 }), // this is the music played on the house screen
-    pageTurn = new Howl({ src: ['audio/pageTurn.mp3'] }), // this is the sound effect used when the player opens the book or turns the page
-    paper = new Howl({ src: ['audio/paper.wav'], volume: 0.4 }), // this is the sound effect used when the player collects the note and letter clues
-    pickUpHoof = new Howl({ src: ['audio/pickUpHoof.wav'], volume: 0.4 }), // this is the sound effect used when the player collects the hoof print clues
-    pickUpKey = new Howl({ src: ['audio/pickUpKey.wav'], volume: 0.2 }), // this is the sound effect used when the player collects the key clue
-    pickUpMaggot = new Howl({ src: ['audio/pickUpMaggot.wav'], volume: 0.4 }), // this is the sound effect used when the player collects the maggot clue
-    playerTalk = new Howl({ src: ['audio/playerTalk.wav'], loop: 1, volume: 0.2 }), // this is the sound effect used when the player is talking
-    ting = new Howl({ src: ['audio/ting.wav'], volume: 0.5 }); // this is the ting sound effect when the player presents a clue at the correct time to the Baron
+var game = new Phaser.Game(1800, 1000, Phaser.AUTO, null, { preload: preload, create: create, update: update, render: render });
+var scene = "title", playButton, player, grandfather, constable, corpse, detective, inspector, door, background,
+    dialogueBox, menuButton, menuScroll, resumeButton, startOverButton, quitButton, paused = false, booksButton, book, bookBackButton,
+    bookOut = "poison", poisonTab, poisonTitle, bugsTab, bugsTitle, nextPageTab, previousPageTab, pageOn = 0,
+    destination, moving = false, direction = "left", cluesFound = [], clueSearchKey, keyFound = false, keyClue, footstepPlaying = false,
+    crimeSceneCount = 1, satchelButton, satchelOpen, satchelBackButton, clueSearchHoofPrints, hoofFound = false, hoofClue, watch, watchGiven = false,
+    dialogueLine, dialogueArrow, lineOn, characterOn, characterDelay = 25, writing = false, speaker, directionArrow, poisonedClue, poisonedFound = false,
+    bugs1, bugs2, bugs3, bugs4, poison1, poison2, poison3, poison4, clueSearchMaggot, maggotFound = false, maggotClue, clueSearchNote, noteClue, noteFound = false,
+    letterClue, clueSearchLetter, letterFound = false, poisonedMag, keyMag, hoofMag, maggotMag, noteMag, letterMag, alted = false, yes, no, done,
+    altScroll, altBack, poisonedAlt, keyAlt, hoofAlt, maggotAlt, noteAlt, letterAlt, poisonedAltText, keyAltText, hoofAltText, maggotAltText,
+    notAltText, noteAltTextBoth, letterAltText, letterAltTextBoth, successes = 0, mistakes = 0, guess = "", loseScreen, winScreen, lost = false, loadingScreen,
+    footstep = new Howl({ src: ['audio/footstep.mp3'], loop: 1 }), pickUpKey = new Howl({ src: ['audio/pickUpKey.wav'], volume: 0.2 }),
+    pickUpHoof = new Howl({ src: ['audio/pickUpHoof.wav'], volume: 0.4 }), pickUpMaggot = new Howl({ src: ['audio/pickUpMaggot.wav'], volume: 0.4 }),
+    constableTalk = new Howl({ src: ['audio/constableTalk.wav'], loop: 1, volume: 0.8 }), grandfatherTalk = new Howl({ src: ['audio/grandfatherTalk.wav'], loop: 1, volume: 1 }),
+    playerTalk = new Howl({ src: ['audio/playerTalk.wav'], loop: 1, volume: 0.2 }), baitmanTalk = new Howl({ src: ['audio/baitmanTalk.wav'], loop: 1, volume: 0.5 }),
+    pageTurn = new Howl({ src: ['audio/pageTurn.mp3'] }), bookClose = new Howl({ src: ['audio/bookClose.mp3'] }), paper = new Howl({ src: ['audio/paper.wav'], volume: 0.4 })
+    bag = new Howl({ src: ['audio/bag.wav'], volume: 0.4 }), houseMusic = new Howl({ src: ['audio/houseMusic.mp3'], volume: 0.4, loop: 1 }),
+    confrontationMusic = new Howl({ src: ['audio/confrontationMusic.mp3'], loop: 1, volume: 0.4 }), clueSearchMusic = new Howl({ src: ['audio/clueSearchMusic.mp3'], loop: 1, volume: 0.4 }),
+    crimeSceneMusic1 = new Howl({ src: ['audio/crimeSceneMusic1.mp3'], loop: 1, volume: 0.4 }), crimeSceneMusic2 = new Howl({ src: ['audio/crimeSceneMusic2.mp3'], loop: 1, volume: 0.4 }),
+    cymbal = new Howl({ src: ['audio/cymbal.mp3'] }), ting = new Howl({ src: ['audio/ting.wav'], volume: 0.5 });
 
 function preload() {
     this.game.load.image('titleScreen', 'images/titleScreen.png'); // this loads in the title screen image
@@ -1544,6 +1436,12 @@ function update() {
                 player.animations.play('playerIdleRight');
             }
         }
+    }
+
+    if (paused){ //this if statement stops the player hitting the done button on the clue earch screen when they have a menu open
+        done.inputEnabled = false;
+    } else{
+        done.inputEnabled = true;
     }
 
     // this chunk of code assigns the correct location for the clues in the bag depending on what order they were collected in
