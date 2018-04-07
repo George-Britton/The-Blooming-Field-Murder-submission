@@ -101,6 +101,7 @@ var alted = false, // this is used so that the player cannot magnify one clue wh
     pageOn = 0, // this is used to determine which page out the book that's out to display
     paused = false, // this is used to deactivate any buttons and movement when the game is paused
     poisonedFound = false, // this is set to true when the constable mentions the potential poisoning
+    prompting = false, // this is set to true in the confrontation scene when the player is asked to present a clue, and makes sure you can't present one out of time
     scene = "title", // this is used to determine who's present, what the background image and music are, and which array of dialogue to be reading
     successes = 0, // this is incremented when the player correctly presents a clue to the Baron
     watchGiven = false, // this is set to true when the player selects the watch from the bag and presents it to the grandfather
@@ -253,7 +254,8 @@ function create() {
     done = game.add.button(300, 900, 'done', nextSceneLoad, this);
     door = game.add.button(0, 0, 'door', nextSceneLoad, this);
     if (scene != "house") { door.visible = false; }
-    if (crimeSceneCount == 1) { corpseDoor = game.add.button(corpse.x, corpse.y, 'corpseDoor', nextSceneLoad, this);        
+    if (crimeSceneCount == 1) {
+        corpseDoor = game.add.button(corpse.x, corpse.y, 'corpseDoor', nextSceneLoad, this);
     } else { corpseDoor = game.add.button(corpse.x, corpse.y, 'corpseDoor', previousSceneLoad, this) }
     if (scene != "crime scene") { corpseDoor.visible = false; }
     loadingScreen = game.add.sprite(0, 0, 'loadingScreen');
@@ -455,6 +457,7 @@ function create() {
 
 function nextLine() { // this function displays the next line of dialogue
     lineOn++; // this progresses the dialogue line by line by incrementing the array slot being read from
+    prompting = false; // this stops the player being able to present clues at a time other than when asked
 
     playerTalk.stop();
     grandfatherTalk.stop();
@@ -782,24 +785,28 @@ function yesNoPrompt() {
     no.visible = true;
 } // this function displays the yes and no buttons for scene changing in the crime scene screen
 function accept() {
-    yes.visible = false;
-    no.visible = false;
-    if (crimeSceneCount == 2) {
-        lineOn = 17;
-        nextLine();
-    } else {
-        lineOn = 3;
-        nextLine();
+    if (!paused) {
+        yes.visible = false;
+        no.visible = false;
+        if (crimeSceneCount == 2) {
+            lineOn = 17;
+            nextLine();
+        } else {
+            lineOn = 3;
+            nextLine();
+        }
     }
 } // this function makes the player tell the constable that they wish to see the Baron, and progresses the dialogue
 function decline() {
-    yes.visible = false;
-    no.visible = false;
-    if (scene == "crime scene" && crimeSceneCount == 2) {
-        lineOn = 14;
-        nextLine();
-    } else if (scene == "crime scene" && crimeSceneCount > 2) {
-        nextLine();
+    if (!paused) {
+        yes.visible = false;
+        no.visible = false;
+        if (scene == "crime scene" && crimeSceneCount == 2) {
+            lineOn = 14;
+            nextLine();
+        } else if (scene == "crime scene" && crimeSceneCount > 2) {
+            nextLine();
+        }
     }
 } // this function makes the player tell the constable that they wish to see the Baron, and progresses the dialogue
 
@@ -1024,7 +1031,7 @@ function rightPoison() { // this function checks if the player has been asked to
     }
 }
 function presentPoisoned() { // this function presents the poisoned face clue at the confrontation, removes it from the bag, closes the bag, and progresses the dialogue in the right tree
-    if (scene == "confrontation" && successes == 0 && !dialogueArrow.visible) {
+    if (scene == "confrontation" && successes == 0 && !dialogueArrow.visible && prompting) {
         lineOn = -1;
         guess = "poisoned";
         poisonedClue.destroy();
@@ -1035,163 +1042,173 @@ function presentPoisoned() { // this function presents the poisoned face clue at
     }
 }
 function presentHoof() { // this function presents the hoof print clue at the confrontation, removes it from the bag, closes the bag, and progresses the dialogue in the right tree, if the wrong clue was tapped, then it doesn't remove the clue, and starts the correct 'wrong clue' dialogue tree, and increments mistakes
-    if (scene == "confrontation" && successes == 0 && !dialogueArrow.visible) {
-        lineOn = 13;
-        guess = "hoof";
-        mistakes++;
-        if (mistakes == 3) { lineOn = -1; }
-        closeSatchel();
-        nextLine();
-    } else if (scene == "confrontation" && successes == 1 && !dialogueArrow.visible) {
-        lineOn = -1;
-        guess = "hoof";
-        hoofClue.destroy();
-        hoofMag.destroy();
-        ting.play();
-        closeSatchel();
-        nextLine();
+    if (prompting) {
+        if (scene == "confrontation" && successes == 0 && !dialogueArrow.visible) {
+            lineOn = 13;
+            guess = "hoof";
+            mistakes++;
+            if (mistakes == 3) { lineOn = -1; }
+            closeSatchel();
+            nextLine();
+        } else if (scene == "confrontation" && successes == 1 && !dialogueArrow.visible) {
+            lineOn = -1;
+            guess = "hoof";
+            hoofClue.destroy();
+            hoofMag.destroy();
+            ting.play();
+            closeSatchel();
+            nextLine();
+        }
     }
 }
 function presentNote() { // this function presents the note clue at the confrontation, removes it from the bag, closes the bag, and progresses the dialogue in the right tree, if the wrong clue was tapped, then it doesn't remove the clue, and starts the correct 'wrong clue' dialogue tree, and increments mistakes
-    if (scene == "confrontation" && successes == 0 && !dialogueArrow.visible) {
-        lineOn = 7;
-        guess = "note";
-        mistakes++;
-        if (mistakes == 3) { lineOn = -1; }
-        closeSatchel();
-        nextLine();
-    } else if (scene == "confrontation" && successes == 1 && !dialogueArrow.visible) {
-        lineOn = 4;
-        guess = "note";
-        mistakes++;
-        if (mistakes == 3) { lineOn = -1; }
-        closeSatchel();
-        nextLine();
-    } else if (scene == "confrontation" && successes == 2 && !dialogueArrow.visible) {
-        lineOn = -1;
-        guess = "note";
-        noteClue.destroy();
-        noteMag.destroy();
-        ting.play();
-        closeSatchel();
-        nextLine();
+    if (prompting) {
+        if (scene == "confrontation" && successes == 0 && !dialogueArrow.visible) {
+            lineOn = 7;
+            guess = "note";
+            mistakes++;
+            if (mistakes == 3) { lineOn = -1; }
+            closeSatchel();
+            nextLine();
+        } else if (scene == "confrontation" && successes == 1 && !dialogueArrow.visible) {
+            lineOn = 4;
+            guess = "note";
+            mistakes++;
+            if (mistakes == 3) { lineOn = -1; }
+            closeSatchel();
+            nextLine();
+        } else if (scene == "confrontation" && successes == 2 && !dialogueArrow.visible) {
+            lineOn = -1;
+            guess = "note";
+            noteClue.destroy();
+            noteMag.destroy();
+            ting.play();
+            closeSatchel();
+            nextLine();
+        }
     }
 }
 function presentLetter() { // this function presents the letter clue at the confrontation, removes it from the bag, closes the bag, and progresses the dialogue in the right tree, if the wrong clue was tapped, then it doesn't remove the clue, and starts the correct 'wrong clue' dialogue tree, and increments mistakes
-    if (scene == "confrontation" && successes == 0 && !dialogueArrow.visible) {
-        lineOn = 10;
-        guess = "letter";
-        mistakes++;
-        if (mistakes == 3) { lineOn = -1; }
-        closeSatchel();
-        nextLine();
-    } else if (scene == "confrontation" && successes == 1 && !dialogueArrow.visible) {
-        lineOn = 7;
-        guess = "letter";
-        mistakes++;
-        if (mistakes == 3) { lineOn = -1; }
-        closeSatchel();
-        nextLine();
-    } else if (scene == "confrontation" && successes == 2 && !dialogueArrow.visible) {
-        lineOn = 6;
-        guess = "letter";
-        mistakes++;
-        if (mistakes == 3) { lineOn = -1; }
-        closeSatchel();
-        nextLine();
-    } else if (scene == "confrontation" && successes == 3 && !dialogueArrow.visible) {
-        lineOn = -1;
-        guess = "letter";
-        letterClue.destroy();
-        letterMag.destroy();
-        ting.play();
-        closeSatchel();
-        nextLine();
+    if (prompting) {
+        if (scene == "confrontation" && successes == 0 && !dialogueArrow.visible) {
+            lineOn = 10;
+            guess = "letter";
+            mistakes++;
+            if (mistakes == 3) { lineOn = -1; }
+            closeSatchel();
+            nextLine();
+        } else if (scene == "confrontation" && successes == 1 && !dialogueArrow.visible) {
+            lineOn = 7;
+            guess = "letter";
+            mistakes++;
+            if (mistakes == 3) { lineOn = -1; }
+            closeSatchel();
+            nextLine();
+        } else if (scene == "confrontation" && successes == 2 && !dialogueArrow.visible) {
+            lineOn = 6;
+            guess = "letter";
+            mistakes++;
+            if (mistakes == 3) { lineOn = -1; }
+            closeSatchel();
+            nextLine();
+        } else if (scene == "confrontation" && successes == 3 && !dialogueArrow.visible) {
+            lineOn = -1;
+            guess = "letter";
+            letterClue.destroy();
+            letterMag.destroy();
+            ting.play();
+            closeSatchel();
+            nextLine();
+        }
     }
 }
 function presentMaggot() { // this function presents the maggot clue at the confrontation, removes it from the bag, closes the bag, and progresses the dialogue in the right tree, if the wrong clue was tapped, then it doesn't remove the clue, and starts the correct 'wrong clue' dialogue tree, and increments mistakes
-    if (scene == "confrontation" && successes == 0 && !dialogueArrow.visible) {
-        lineOn = 4;
-        guess = "maggot";
-        mistakes++;
-        if (mistakes == 3) { lineOn = -1; }
-        closeSatchel();
-        nextLine();
-    } else if (scene == "confrontation" && successes == 1 && !dialogueArrow.visible) {
-        lineOn = 10;
-        guess = "maggot";
-        mistakes++;
-        if (mistakes == 3) { lineOn = -1; }
-        closeSatchel();
-        nextLine();
-    } else if (scene == "confrontation" && successes == 2 && !dialogueArrow.visible) {
-        lineOn = 9;
-        guess = "maggot";
-        mistakes++;
-        if (mistakes == 3) { lineOn = -1; }
-        closeSatchel();
-        nextLine();
-    } else if (scene == "confrontation" && successes == 3 && !dialogueArrow.visible) {
-        lineOn = 3;
-        guess = "maggot";
-        mistakes++;
-        if (mistakes == 3) { lineOn = -1; }
-        closeSatchel();
-        nextLine();
-    } else if (scene == "confrontation" && successes == 4 && !dialogueArrow.visible) {
-        lineOn = -1;
-        guess = "maggot";
-        maggotClue.destroy();
-        maggotMag.destroy();
-        ting.play();
-        closeSatchel();
-        nextLine();
+    if (prompting) {
+        if (scene == "confrontation" && successes == 0 && !dialogueArrow.visible) {
+            lineOn = 4;
+            guess = "maggot";
+            mistakes++;
+            if (mistakes == 3) { lineOn = -1; }
+            closeSatchel();
+            nextLine();
+        } else if (scene == "confrontation" && successes == 1 && !dialogueArrow.visible) {
+            lineOn = 10;
+            guess = "maggot";
+            mistakes++;
+            if (mistakes == 3) { lineOn = -1; }
+            closeSatchel();
+            nextLine();
+        } else if (scene == "confrontation" && successes == 2 && !dialogueArrow.visible) {
+            lineOn = 9;
+            guess = "maggot";
+            mistakes++;
+            if (mistakes == 3) { lineOn = -1; }
+            closeSatchel();
+            nextLine();
+        } else if (scene == "confrontation" && successes == 3 && !dialogueArrow.visible) {
+            lineOn = 3;
+            guess = "maggot";
+            mistakes++;
+            if (mistakes == 3) { lineOn = -1; }
+            closeSatchel();
+            nextLine();
+        } else if (scene == "confrontation" && successes == 4 && !dialogueArrow.visible) {
+            lineOn = -1;
+            guess = "maggot";
+            maggotClue.destroy();
+            maggotMag.destroy();
+            ting.play();
+            closeSatchel();
+            nextLine();
+        }
     }
 }
 function presentKey() { // this function presents the key clue at the confrontation, removes it from the bag, closes the bag, and progresses the dialogue in the right tree, if the wrong clue was tapped, then it doesn't remove the clue, and starts the correct 'wrong clue' dialogue tree, and increments mistakes
-    if (scene == "confrontation" && successes == 0 && !dialogueArrow.visible) {
-        lineOn = 1;
-        guess = "key";
-        mistakes++;
-        if (mistakes == 3) { lineOn = -1; }
-        closeSatchel();
-        nextLine();
-    } else if (scene == "confrontation" && successes == 1 && !dialogueArrow.visible) {
-        lineOn = 13;
-        guess = "key";
-        mistakes++;
-        if (mistakes == 3) { lineOn = -1; }
-        closeSatchel();
-        nextLine();
-    } else if (scene == "confrontation" && successes == 2 && !dialogueArrow.visible) {
-        lineOn = 12;
-        guess = "key";
-        mistakes++;
-        if (mistakes == 3) { lineOn = -1; }
-        closeSatchel();
-        nextLine();
-    } else if (scene == "confrontation" && successes == 3 && !dialogueArrow.visible) {
-        lineOn = 6;
-        guess = "key";
-        mistakes++;
-        if (mistakes == 3) { lineOn = -1; }
-        closeSatchel();
-        nextLine();
-    } else if (scene == "confrontation" && successes == 4 && !dialogueArrow.visible) {
-        lineOn = 2;
-        guess = "key";
-        mistakes++;
-        if (mistakes == 3) { lineOn = -1; }
-        closeSatchel();
-        nextLine();
-    } else if (scene == "confrontation" && successes == 5 && !dialogueArrow.visible) {
-        lineOn = -1;
-        guess = "key";
-        keyClue.destroy();
-        keyMag.destroy();
-        ting.play();
-        closeSatchel();
-        nextLine();
+    if (prompting) {
+        if (scene == "confrontation" && successes == 0 && !dialogueArrow.visible) {
+            lineOn = 1;
+            guess = "key";
+            mistakes++;
+            if (mistakes == 3) { lineOn = -1; }
+            closeSatchel();
+            nextLine();
+        } else if (scene == "confrontation" && successes == 1 && !dialogueArrow.visible) {
+            lineOn = 13;
+            guess = "key";
+            mistakes++;
+            if (mistakes == 3) { lineOn = -1; }
+            closeSatchel();
+            nextLine();
+        } else if (scene == "confrontation" && successes == 2 && !dialogueArrow.visible) {
+            lineOn = 12;
+            guess = "key";
+            mistakes++;
+            if (mistakes == 3) { lineOn = -1; }
+            closeSatchel();
+            nextLine();
+        } else if (scene == "confrontation" && successes == 3 && !dialogueArrow.visible) {
+            lineOn = 6;
+            guess = "key";
+            mistakes++;
+            if (mistakes == 3) { lineOn = -1; }
+            closeSatchel();
+            nextLine();
+        } else if (scene == "confrontation" && successes == 4 && !dialogueArrow.visible) {
+            lineOn = 2;
+            guess = "key";
+            mistakes++;
+            if (mistakes == 3) { lineOn = -1; }
+            closeSatchel();
+            nextLine();
+        } else if (scene == "confrontation" && successes == 5 && !dialogueArrow.visible) {
+            lineOn = -1;
+            guess = "key";
+            keyClue.destroy();
+            keyMag.destroy();
+            ting.play();
+            closeSatchel();
+            nextLine();
+        }
     }
 }
 function closeSatchel() { // this function closes the bag and unpauses the game
@@ -1545,7 +1562,7 @@ function update() {
             }
         }
     }
-    
+
     if (paused) {
         done.inputEnabled = false;
     } else {
@@ -1610,7 +1627,7 @@ function update() {
         footstep.stop();
     } // this stops the footstep sounds when the player stops walking, a double check is needed in case of an accidental skip of the first
 
-     // the following if statements play and stop the dialogue continue dots
+    // the following if statements play and stop the dialogue continue dots
     if (scene != "clue search" && !writing && dialogueLine.text != "" && speaker.text != "" && !paused) {
         dialogueArrow.visible = true;
         dialogueArrow.animations.play('arrowMove');
@@ -1640,46 +1657,60 @@ function update() {
             dialogueArrow.animations.stop();
             dialogueArrow.visible = false;
         }
+    } else if (dialogueLine.text == confrontationLine[confrontationLine.length - 1]) {
+        dialogueArrow.animations.stop();
+        dialogueArrow.visible = false;
+        prompting = true;
     } else if (scene == "confrontation" && guess != "" && successes == 0) {
         if (lineOn == 4 || lineOn == 7 || lineOn == 10 || lineOn == 13 || lineOn == 16) {
             dialogueArrow.animations.stop();
             dialogueArrow.visible = false;
+            prompting = true;
         }
     } else if (successes == 1 && lineOn == 1 && guess == "poisoned" && hoofFound) {
         dialogueArrow.animations.stop();
         dialogueArrow.visible = false;
+        prompting = true;
     } else if (scene == "confrontation" && successes == 1 && guess != "hoof") {
         if (lineOn == 7 || lineOn == 10 || lineOn == 13 || lineOn == 16) {
             dialogueArrow.animations.stop();
             dialogueArrow.visible = false;
+            prompting = true;
         }
     } else if (successes == 2 && lineOn == 4 && guess == "hoof" && noteFound) {
         dialogueArrow.animations.stop();
         dialogueArrow.visible = false;
+        prompting = true;
     } else if (scene == "confrontation" && successes == 2 && guess != "note") {
         if (lineOn == 9 || lineOn == 12 || lineOn == 15) {
             dialogueArrow.animations.stop();
             dialogueArrow.visible = false;
+            prompting = true;
         }
     } else if (successes == 2 && lineOn == 6 && guess == "note" && letterFound) {
         dialogueArrow.animations.stop();
         dialogueArrow.visible = false;
+        prompting = true;
     } else if (scene == "confrontation" && successes == 3 && guess != "letter") {
         if (lineOn == 6 || lineOn == 9) {
             dialogueArrow.animations.stop();
             dialogueArrow.visible = false;
+            prompting = true;
         }
     } else if (successes == 4 && lineOn == 3 && guess == "letter" && maggotFound) {
         dialogueArrow.animations.stop();
         dialogueArrow.visible = false;
+        prompting = true;
     } else if (scene == "confrontation" && successes == 4 && guess != "maggot") {
         if (lineOn == 5) {
             dialogueArrow.animations.stop();
             dialogueArrow.visible = false;
+            prompting = true;
         }
     } else if (successes == 5 && lineOn == 2 && guess == "maggot" && keyFound) {
         dialogueArrow.animations.stop();
         dialogueArrow.visible = false;
+        prompting = true;
     }
     if (lineOn == 17 || lineOn == 19) {
         if (scene == "crime scene") {
