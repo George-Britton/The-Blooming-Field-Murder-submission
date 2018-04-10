@@ -20,6 +20,7 @@ var altBack, // this is the 'x' button to close the magnified clue overview
     clueSearchNote, // this is the note image that appears on the clue search scene
     constable, // this is the constable character sprite
     corpse, // this is the dead body sprite
+    clueSearchHint, // this is the pop-up box that prompts the player to tap the clues to collect them
     destination, // this is the 1 pixel sprite that is spawned when the player taps on the screen to walk somewhere
     dialogueArrow, // this is the three dots in the dialogue box that appear to show the player they can continue the dialogue
     dialogueBox, // this is the dialogue box that spans the game bounds from (0, 700) to (1800, 1000)
@@ -27,6 +28,7 @@ var altBack, // this is the 'x' button to close the magnified clue overview
     directionArrow, // this is the poiting arrow in the house scene
     done, // this is the done button in the clue search scene
     door, // this is the door sprite that the player can press to leave the house scene
+    gotIt, // this is the button to get rid of the clueSearchHint pop-up box
     grandfather, // this is the grandfather character sprite
     hoofAlt, // this is the magnified hoof print image
     hoofAltText, // this is the magnified hoof print text
@@ -170,6 +172,8 @@ function preload() {
     this.game.load.spritesheet('grandfather', 'images/grandfather.png', 225, 225); // this loads in the grandfather sprite
     this.game.load.spritesheet('constable', 'images/constable.png', 250, 250); // this loads in the constable sprite
     this.game.load.image('corpse', 'images/body.png'); // this loads in the dead body sprite
+    this.game.load.image('clueSearchHint', 'images/clueSearchHint.png'); // this loads the pop-up box that prompts the player to tap the clues
+    this.game.load.image('gotIt', 'images/gotIt.png'); // this loads the image for the button to close the clueSearchHint pop-up box
     this.game.load.image('clueSearch_key', 'images/clueSearch_key.png'); // this loads in the key clue on the clue search scene screen
     this.game.load.image('clueSearch_hoofPrints', 'images/hoofPrints.png'); // this loads in the hoof clue on the clue search scene screen
     this.game.load.spritesheet('clueSearch_maggot', 'images/clueSearch_maggot.png', 50, 38); // this loads in the maggot clue on the clue search scene screen
@@ -261,7 +265,7 @@ function create() {
     loadingScreen = game.add.sprite(0, 0, 'loadingScreen');
     // this group of code creates the images that are used in most scenes, the characters, the dialogue area, the menu buttons, and the doors, and makes them invisible when they're not in use
 
-    menuScroll = game.add.image(550, 100, 'menu');
+    menuScroll = game.add.image(550, -800, 'menu');
     resumeButton = game.add.button(700, 235, 'resumeButton', resume, this);
     startOverButton = game.add.button(700, 410, 'startOverButton', startOver, this);
     quitButton = game.add.button(700, 585, 'quitButton', quit, this);
@@ -435,6 +439,11 @@ function create() {
         done.visible = false;
         nextLine();
     }// this if statement is just here so the player faces the body on the clue search screen, and spawns facing left on the others
+
+    if (scene == "clue search" && crimeSceneCount == 1) {
+        clueSearchHint = game.add.image(700, 350, 'clueSearchHint');
+        gotIt = game.add.button(825, 560, 'gotIt', closeHint, this);
+    } // this if statement creates the pop-up that tells the player to collect clues in the clue search screen
 
     if (scene == "title") {
         quitButton.visible = true;
@@ -810,35 +819,50 @@ function decline() {
     }
 } // this function makes the player tell the constable that they wish to see the Baron, and progresses the dialogue
 
+function closeHint() {
+    clueSearchHint.destroy();
+    gotIt.destroy();
+} // this functino gets rid of the pop up box prompting the player to collect clues;
+
 function keyFind() {
-    clueSearchKey.visible = false;
-    cluesFound[cluesFound.length] = "key";
-    keyFound = true;
-    pickUpKey.play();
+    if (!gotIt.visible) {
+        clueSearchKey.visible = false;
+        cluesFound[cluesFound.length] = "key";
+        keyFound = true;
+        pickUpKey.play();
+    }
 } // this if statement hides the key and adds it to the satchel when the player picks it up
 function hoofFind() {
-    clueSearchHoofPrints.visible = false;
-    pickUpHoof.play();
-    cluesFound[cluesFound.length] = "hoof";
-    hoofFound = true;
+    if (!gotIt.visible) {
+        clueSearchHoofPrints.visible = false;
+        pickUpHoof.play();
+        cluesFound[cluesFound.length] = "hoof";
+        hoofFound = true;
+    }
 } // this if statement hides the hoof prints and adds it to the satchel when the player picks it up
 function maggotFind() {
-    clueSearchMaggot.visible = false;
-    cluesFound[cluesFound.length] = "maggot";
-    pickUpMaggot.play();
-    maggotFound = true;
+    if (!gotIt.visible) {
+        clueSearchMaggot.visible = false;
+        cluesFound[cluesFound.length] = "maggot";
+        pickUpMaggot.play();
+        maggotFound = true;
+    }
 } // this if statement hides the maggots and adds it to the satchel when the player picks it up
 function noteFind() {
-    clueSearchNote.visible = false;
-    cluesFound[cluesFound.length] = "note";
-    paper.play();
-    noteFound = true;
+    if (!gotIt.visible) {
+        clueSearchNote.visible = false;
+        cluesFound[cluesFound.length] = "note";
+        paper.play();
+        noteFound = true;
+    }
 } // this if statement hides the note and adds it to the satchel when the player picks it up
 function letterFind() {
-    clueSearchLetter.visible = false;
-    cluesFound[cluesFound.length] = "letter";
-    paper.play();
-    letterFound = true;
+    if (!gotIt.visible) {
+        clueSearchLetter.visible = false;
+        cluesFound[cluesFound.length] = "letter";
+        paper.play();
+        letterFound = true;
+    }
 } // this if statement hides the letter and adds it to the satchel when the player picks it up
 
 function showMenu() {
@@ -847,7 +871,7 @@ function showMenu() {
         if (moving) {
             stopMoving();
         }
-        player.visible = false;
+        player.visible = false; 
         menuScroll.visible = true;
         resumeButton.visible = true;
         quitButton.visible = true;
@@ -1563,7 +1587,7 @@ function update() {
         }
     }
 
-    if (paused) {
+    if (scene == "clue search" && (paused || gotIt.visible)) {
         done.inputEnabled = false;
     } else {
         done.inputEnabled = true;
