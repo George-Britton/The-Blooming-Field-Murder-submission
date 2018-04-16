@@ -462,6 +462,8 @@ function create() {
         loadingScreen.animations.play('load');
         game.time.events.add(Phaser.Timer.SECOND * 0, loadOut, this);
     } // this if statement hides all the last images that are displayed on all screens except the title screen, and fades out the loading screen
+
+    ga('send', 'event', 'The Blooming Field Murder', 'Scene Change ' + scene);
 }
 
 function nextLine() { // this function displays the next line of dialogue
@@ -781,12 +783,14 @@ function winCondition() {
     winScreen = game.add.image(0, 0, 'winScreen');
     confrontationMusic.stop();
     houseMusic.play();
+    ga('send', 'event', 'The Blooming Field Murder', 'Condition Win');
 } // this function stops the confrontation music, plays the house/win music, and shows the win screen
 
 function loseCondition() {
     loseScreen = game.add.image(0, 0, 'loseScreen');
     confrontationMusic.stop();
     crimeSceneMusic1.play();
+    ga('send', 'event', 'The Blooming Field Murder', 'Condition Lose');
 } // this function stops the confrontation music, plays the crime scene/lose music, and shows the lose screen
 
 function yesNoPrompt() {
@@ -816,6 +820,7 @@ function decline() {
         } else if (scene == "crime scene" && crimeSceneCount > 2) {
             nextLine();
         }
+        ga('send', 'event', 'The Blooming Field Murder', 'Double check for clues');
     }
 } // this function makes the player tell the constable that they wish to see the Baron, and progresses the dialogue
 
@@ -830,6 +835,7 @@ function keyFind() {
         cluesFound[cluesFound.length] = "key";
         keyFound = true;
         pickUpKey.play();
+        ga('send', 'event', 'The Blooming Field Murder', 'Find Key');
     }
 } // this if statement hides the key and adds it to the satchel when the player picks it up
 function hoofFind() {
@@ -838,6 +844,7 @@ function hoofFind() {
         pickUpHoof.play();
         cluesFound[cluesFound.length] = "hoof";
         hoofFound = true;
+        ga('send', 'event', 'The Blooming Field Murder', 'Find Hoof');
     }
 } // this if statement hides the hoof prints and adds it to the satchel when the player picks it up
 function maggotFind() {
@@ -846,6 +853,7 @@ function maggotFind() {
         cluesFound[cluesFound.length] = "maggot";
         pickUpMaggot.play();
         maggotFound = true;
+        ga('send', 'event', 'The Blooming Field Murder', 'Find Maggot');
     }
 } // this if statement hides the maggots and adds it to the satchel when the player picks it up
 function noteFind() {
@@ -854,6 +862,7 @@ function noteFind() {
         cluesFound[cluesFound.length] = "note";
         paper.play();
         noteFound = true;
+        ga('send', 'event', 'The Blooming Field Murder', 'Find Note');
     }
 } // this if statement hides the note and adds it to the satchel when the player picks it up
 function letterFind() {
@@ -862,6 +871,7 @@ function letterFind() {
         cluesFound[cluesFound.length] = "letter";
         paper.play();
         letterFound = true;
+        ga('send', 'event', 'The Blooming Field Murder', 'Find Letter');
     }
 } // this if statement hides the letter and adds it to the satchel when the player picks it up
 
@@ -1052,6 +1062,7 @@ function rightPoison() { // this function checks if the player has been asked to
     if (crimeSceneCount == 2 && scene == "crime scene" && lineOn == 1) {
         closeBook();
         nextLine();
+        ga('send', 'event', 'The Blooming Field Murder', 'Conversation Progression via Poison');
     }
 }
 function presentPoisoned() { // this function presents the poisoned face clue at the confrontation, removes it from the bag, closes the bag, and progresses the dialogue in the right tree
@@ -1063,6 +1074,7 @@ function presentPoisoned() { // this function presents the poisoned face clue at
         ting.play();
         closeSatchel();
         nextLine();
+        ga('send', 'event', 'The Blooming Field Murder', 'Present Poison');
     }
 }
 function presentHoof() { // this function presents the hoof print clue at the confrontation, removes it from the bag, closes the bag, and progresses the dialogue in the right tree, if the wrong clue was tapped, then it doesn't remove the clue, and starts the correct 'wrong clue' dialogue tree, and increments mistakes
@@ -1082,6 +1094,7 @@ function presentHoof() { // this function presents the hoof print clue at the co
             ting.play();
             closeSatchel();
             nextLine();
+            ga('send', 'event', 'The Blooming Field Murder', 'Present Hoof');
         }
     }
 }
@@ -1109,6 +1122,7 @@ function presentNote() { // this function presents the note clue at the confront
             ting.play();
             closeSatchel();
             nextLine();
+            ga('send', 'event', 'The Blooming Field Murder', 'Present Note');
         }
     }
 }
@@ -1143,6 +1157,7 @@ function presentLetter() { // this function presents the letter clue at the conf
             ting.play();
             closeSatchel();
             nextLine();
+            ga('send', 'event', 'The Blooming Field Murder', 'Present Letter');
         }
     }
 }
@@ -1184,6 +1199,7 @@ function presentMaggot() { // this function presents the maggot clue at the conf
             ting.play();
             closeSatchel();
             nextLine();
+            ga('send', 'event', 'The Blooming Field Murder', 'Present Maggot');
         }
     }
 }
@@ -1232,6 +1248,7 @@ function presentKey() { // this function presents the key clue at the confrontat
             ting.play();
             closeSatchel();
             nextLine();
+            ga('send', 'event', 'The Blooming Field Murder', 'Present Key');
         }
     }
 }
