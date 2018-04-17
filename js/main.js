@@ -463,7 +463,7 @@ function create() {
         game.time.events.add(Phaser.Timer.SECOND * 0, loadOut, this);
     } // this if statement hides all the last images that are displayed on all screens except the title screen, and fades out the loading screen
 
-    ga('send', 'event', 'The Blooming Field Murder', 'Scene Change ' + scene);
+    ga('send', 'event', 'The Blooming Field Murder', 'Scene Change', scene);
 }
 
 function nextLine() { // this function displays the next line of dialogue
@@ -783,14 +783,14 @@ function winCondition() {
     winScreen = game.add.image(0, 0, 'winScreen');
     confrontationMusic.stop();
     houseMusic.play();
-    ga('send', 'event', 'The Blooming Field Murder', 'Condition Win');
+    ga('send', 'event', 'The Blooming Field Murder', 'Condition', 'Win');
 } // this function stops the confrontation music, plays the house/win music, and shows the win screen
 
 function loseCondition() {
     loseScreen = game.add.image(0, 0, 'loseScreen');
     confrontationMusic.stop();
     crimeSceneMusic1.play();
-    ga('send', 'event', 'The Blooming Field Murder', 'Condition Lose');
+    ga('send', 'event', 'The Blooming Field Murder', 'Condition', 'Lose');
 } // this function stops the confrontation music, plays the crime scene/lose music, and shows the lose screen
 
 function yesNoPrompt() {
@@ -835,7 +835,7 @@ function keyFind() {
         cluesFound[cluesFound.length] = "key";
         keyFound = true;
         pickUpKey.play();
-        ga('send', 'event', 'The Blooming Field Murder', 'Find Key');
+        ga('send', 'event', 'The Blooming Field Murder', 'Clue Find', 'Key');
     }
 } // this if statement hides the key and adds it to the satchel when the player picks it up
 function hoofFind() {
@@ -844,7 +844,7 @@ function hoofFind() {
         pickUpHoof.play();
         cluesFound[cluesFound.length] = "hoof";
         hoofFound = true;
-        ga('send', 'event', 'The Blooming Field Murder', 'Find Hoof');
+        ga('send', 'event', 'The Blooming Field Murder', 'Clue Find', 'Hoof');
     }
 } // this if statement hides the hoof prints and adds it to the satchel when the player picks it up
 function maggotFind() {
@@ -853,7 +853,7 @@ function maggotFind() {
         cluesFound[cluesFound.length] = "maggot";
         pickUpMaggot.play();
         maggotFound = true;
-        ga('send', 'event', 'The Blooming Field Murder', 'Find Maggot');
+        ga('send', 'event', 'The Blooming Field Murder', 'Clue Find', 'Maggots');
     }
 } // this if statement hides the maggots and adds it to the satchel when the player picks it up
 function noteFind() {
@@ -862,7 +862,7 @@ function noteFind() {
         cluesFound[cluesFound.length] = "note";
         paper.play();
         noteFound = true;
-        ga('send', 'event', 'The Blooming Field Murder', 'Find Note');
+        ga('send', 'event', 'The Blooming Field Murder', 'Clue Find', 'Note');
     }
 } // this if statement hides the note and adds it to the satchel when the player picks it up
 function letterFind() {
@@ -871,7 +871,7 @@ function letterFind() {
         cluesFound[cluesFound.length] = "letter";
         paper.play();
         letterFound = true;
-        ga('send', 'event', 'The Blooming Field Murder', 'Find Letter');
+        ga('send', 'event', 'The Blooming Field Murder', 'Clue Find', 'Letter');
     }
 } // this if statement hides the letter and adds it to the satchel when the player picks it up
 
@@ -1074,7 +1074,7 @@ function presentPoisoned() { // this function presents the poisoned face clue at
         ting.play();
         closeSatchel();
         nextLine();
-        ga('send', 'event', 'The Blooming Field Murder', 'Present Poison');
+        ga('send', 'event', 'The Blooming Field Murder', 'Present Clue', 'Poisoned Face');
     }
 }
 function presentHoof() { // this function presents the hoof print clue at the confrontation, removes it from the bag, closes the bag, and progresses the dialogue in the right tree, if the wrong clue was tapped, then it doesn't remove the clue, and starts the correct 'wrong clue' dialogue tree, and increments mistakes
@@ -1094,7 +1094,7 @@ function presentHoof() { // this function presents the hoof print clue at the co
             ting.play();
             closeSatchel();
             nextLine();
-            ga('send', 'event', 'The Blooming Field Murder', 'Present Hoof');
+            ga('send', 'event', 'The Blooming Field Murder', 'Present Clue', 'Hoof');
         }
     }
 }
@@ -1122,7 +1122,7 @@ function presentNote() { // this function presents the note clue at the confront
             ting.play();
             closeSatchel();
             nextLine();
-            ga('send', 'event', 'The Blooming Field Murder', 'Present Note');
+            ga('send', 'event', 'The Blooming Field Murder', 'Present Clue', 'Note');
         }
     }
 }
@@ -1157,7 +1157,7 @@ function presentLetter() { // this function presents the letter clue at the conf
             ting.play();
             closeSatchel();
             nextLine();
-            ga('send', 'event', 'The Blooming Field Murder', 'Present Letter');
+            ga('send', 'event', 'The Blooming Field Murder', 'Present Clue', 'Letter');
         }
     }
 }
@@ -1199,7 +1199,7 @@ function presentMaggot() { // this function presents the maggot clue at the conf
             ting.play();
             closeSatchel();
             nextLine();
-            ga('send', 'event', 'The Blooming Field Murder', 'Present Maggot');
+            ga('send', 'event', 'The Blooming Field Murder', 'Present Clue', 'Maggots');
         }
     }
 }
@@ -1248,7 +1248,7 @@ function presentKey() { // this function presents the key clue at the confrontat
             ting.play();
             closeSatchel();
             nextLine();
-            ga('send', 'event', 'The Blooming Field Murder', 'Present Key');
+            ga('send', 'event', 'The Blooming Field Murder', 'Present Clue', 'Key');
         }
     }
 }
