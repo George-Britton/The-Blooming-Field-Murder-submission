@@ -1,4 +1,4 @@
-var houseLine = [
+var houseLine = [ // dialogue tree for the house scene
     "Florence!",
     "Ah, there you are. Do you still have my watch that you borrowed for the Atkinson case?",
     "Select the watch from your bag to return it to your grandfather.",
@@ -7,7 +7,7 @@ var houseLine = [
     "We have no time to lose, lets go."
 ];
 
-var crimeSceneOneLine = [
+var crimeSceneOneLine = [ // dialogue tree for the first crime scene screen
     "Mister Merkitt, Florence, thank you for coming.",
     "What have we got?",
     "Alma Graves, scullery maid of Baron Abraham Baitman.",
@@ -20,7 +20,7 @@ var crimeSceneOneLine = [
     "Select the body to enter 'Search Mode'"
 ];
 
-var crimeSceneTwoLine = [
+var crimeSceneTwoLine = [ // dialogue tree for the second crime scene screen
     "Do you think you can identify the poison with your books?",
     "Search the books for information pertaining to the clues in your bag, and select the poison that may have been used.\nYou can use the magnifying glass icon next to the clues to learn more about them.",
     "I believe in all likelihood that Miss Graves died having ingested Aconitum napellus, also known as Monkshood.",
@@ -43,7 +43,7 @@ var crimeSceneTwoLine = [
     ""
 ];
 
-var crimeSceneRestLine = [
+var crimeSceneRestLine = [ // dialogue tree for the rest of the crime scene screens
     "Well, are you satisfied that you've seen everything you wanted?",
     "Not quite yet, I would like to make sure I didn't miss anything.",
     "As you wish.",
@@ -52,7 +52,7 @@ var crimeSceneRestLine = [
     ""
 ];
 
-var confrontationLine = [
+var confrontationLine = [ // dialogue tree for the confrontation scene (before the clue presentations)
     "Baron Abraham Baitman, I understand.",
     "My name is Constable Perkins, and this is Jonathan Merkitt and his granddaughter Florence.",
     "Good afternoon.",
@@ -66,7 +66,7 @@ var confrontationLine = [
     "I see. Well, good! So how did it happen?",
     "Present the clues in the correct order to complete the sequence of events. Three mistakes and you lose."
 ];
-var presentPoisonedLine = [
+var presentPoisonedLine = [ // dialogue tree after the prompting for the poisoned face
     "Miss Graves died from asphyxiation having been poisoned with Monkshood.",
     "Poison? Well that seems unlikely, what about the wound in her torso?",
     "She was stabbed by this key!",
@@ -86,7 +86,7 @@ var presentPoisonedLine = [
     "No, wait, that wasn't it."
 ];
 
-var presentHoofLine = [
+var presentHoofLine = [ // dialogue tree after the prompting for the hoof
     "That was caused by a bull, having somehow found its way out of its field.",
     "And you don't see that as a more likely candidate for a cause of death?",
     "Oh it may have contributed to her demise, but there were small red spots in her eyes, and a blue pigmentation to her lips.",
@@ -106,7 +106,7 @@ var presentHoofLine = [
     "No, nor to me."
 ];
 
-var presentNoteLine = [
+var presentNoteLine = [ // dialogue tree after the prompting for the note
     "Well I found this note. I believe it was blown from her pocket, or more likely her hand, by the wind.",
     "Blown... from her hand... by the wind...",
     "Yes. Would you like me to read it to you?",
@@ -125,7 +125,7 @@ var presentNoteLine = [
     "Yes, I suppose it is a bit."
 ];
 
-var presentLetterLine = [
+var presentLetterLine = [ // dialogue tree after the prompting for the letter
     "I would also wonder, were it not for this letter of recommendation I found laying by her.",
     "It seems that Miss Graves was to leave your employment to join your neighbour's household.",
     "Indeed, she informed me of her intention to leave and asked me if I would be so kind as to write a letter of recommendation.",
@@ -138,7 +138,7 @@ var presentLetterLine = [
     "I suppose it wouldn't be him, in that case.",
 ];
 
-var presentMaggotLine = [
+var presentMaggotLine = [ // dialogue tree after the prompting for the maggots
     "These maggots indicate that Miss Graves was out in that field for 1-2 days.",
     "So why did we only get notified this morning of her absence?",
     "I don't take too kindly to what you are insinuating, young lady. Who do you think I am?",
@@ -147,7 +147,7 @@ var presentMaggotLine = [
     "I have no idea."
 ];
 
-var win = [
+var win = [ // dialogue tree leading up to the win condition
     "Oh, I nearly forgot, I found this.",
     "That's... my key, my key to my bedroom... I've been looking for that for days.",
     "Yes, I thought as much.",
@@ -169,13 +169,13 @@ var win = [
     ""
 ];
 
-var lose = [
+var lose = [ // dialogue tree leading up to the lose condition having made three mistakes
     "Oh this is intollerable. Come back when you've got some sense in your head.",
     "Such a matter being treated so clumsily is better left untouched.",
     "You can see yourselves out."
 ];
 
-var loseMiss = [
+var loseMiss = [ // dialogue tree leading up to the lose condition having missed a clue
     "I... I don't know.",
     "Oh this is intollerable. Come back when you've got some sense in your head.",
     "Such a matter being treated so clumsily is better left untouched.",
