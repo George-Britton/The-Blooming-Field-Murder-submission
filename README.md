@@ -1,11 +1,7 @@
 # The-Blooming-Field-Murder
 Victorian Detective Game made in JavaScript with the Phaser API and Howler API
 
-This game works on Chrome on a Samsung Galaxy Tab 3, Chrome and Firefox on a PC, and Chrome for Android phone, possibly others, but yet untested. Optimised towork on screens of resolution 1920x1080p or bigger.
+This game works on Chrome on a Samsung Galaxy Tab 3, Chrome and Firefox on a PC, and Chrome for Android phone, possibly others, but yet untested. Optimised towork on screens of resolution 1920x1080p or higher.
 
 # To do:
-• Add tween animations for the opening and closing of menus
-
-• Add tween animations for the collection of clues
-
-• Add a prompt in the clue search scene that tells players to tap clues to collect them
+• Find any bugs regarding the use functionality of the game and fix them.
