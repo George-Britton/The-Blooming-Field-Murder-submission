@@ -900,6 +900,7 @@ function resume() {
     }
 } // this function resumes the game from the start menu
 function startOver() {
+	ga('send', 'event', 'The Blooming Field Murder', 'Start Over');
     window.location.reload();
 } // this function restarts the game
 function quit() {
